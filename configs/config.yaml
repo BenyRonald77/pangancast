@@ -1,0 +1,120 @@
+# PanganCast — semua parameter pipeline ada di sini (PRD: reproducibility).
+seed: 42
+
+paths:
+  raw: data/raw
+  processed: data/processed/prices.parquet
+  models: models
+  outputs: outputs
+  best_params: configs/best_params.yaml
+
+pihps:
+  base_url: https://www.bi.go.id/hargapangan/WebSite/TabelHarga
+  referer: https://www.bi.go.id/hargapangan/TabelHarga/PasarTradisionalKomoditas
+  price_type_id: 1          # 1 = Pasar Tradisional
+  start_date: "2018-01-01"
+  end_date: null            # null = hari ini
+  request_delay_s: 2.0      # jeda antar request agar tidak membebani server BI
+  timeout_s: 180
+  max_retries: 3
+
+# slug -> id komoditas PIHPS (GetRefCommodityAndCategory)
+commodities:
+  beras_medium_1:
+    pihps_id: com_3
+    label: Beras Kualitas Medium I
+  bawang_merah:
+    pihps_id: com_11
+    label: Bawang Merah Ukuran Sedang
+  bawang_putih:
+    pihps_id: com_12
+    label: Bawang Putih Ukuran Sedang
+  cabai_merah_keriting:
+    pihps_id: com_14
+    label: Cabai Merah Keriting
+  cabai_rawit_merah:
+    pihps_id: com_16
+    label: Cabai Rawit Merah
+
+# slug -> nama baris pada respons PIHPS
+regions:
+  nasional:
+    pihps_name: Semua Provinsi
+    province_id: null
+    label: Nasional
+  diy:
+    pihps_name: DI Yogyakarta
+    province_id: 15
+    label: DI Yogyakarta
+
+cleaning:
+  ffill_limit: 3            # hari berturut-turut maksimal untuk forward-fill
+  outlier_window: 30        # rolling window z-score
+  outlier_z: 6.0            # ambang robust z-score
+  outlier_min_jump: 0.4     # lonjakan relatif minimum (40%) untuk dianggap salah input
+  max_gap_ratio: 0.10       # PRD risiko: jika celah > 10%, beri peringatan
+
+features:
+  lags: [1, 2, 3, 4, 5, 6, 7, 14, 21, 28, 30]
+  rolling_windows: [7, 14, 30]
+  holiday_window: [-14, 7]  # H-14 s.d. H+7
+
+backtest:
+  horizons: [7, 14, 30]
+  max_horizon: 30
+  n_folds: 12
+  test_size: 30             # hari per fold
+  holdout_days: 90          # holdout akhir, tidak disentuh saat tuning
+  intervals: [0.8, 0.95]
+
+models:
+  enabled: [naive, seasonal_naive, arima, prophet, xgboost, lstm]
+  arima:
+    seasonal: true
+    m: 7
+    max_p: 3
+    max_q: 3
+    max_P: 1
+    max_Q: 1
+    select_train_days: 1095 # auto_arima memilih orde pada 3 tahun terakhir data train fold pertama
+  prophet:
+    changepoint_prior_scale: 0.05
+    seasonality_prior_scale: 10.0
+    holidays_prior_scale: 10.0
+    yearly_seasonality: true
+    weekly_seasonality: true
+    uncertainty_samples: 300
+  xgboost:
+    n_estimators: 400
+    learning_rate: 0.05
+    max_depth: 4
+    subsample: 0.8
+    colsample_bytree: 0.8
+    min_child_weight: 5
+    reg_lambda: 1.0
+    calibration_days: 180   # data akhir train untuk kalibrasi interval (split conformal)
+  lstm:
+    window: 60
+    hidden_size: 64
+    num_layers: 1
+    dropout: 0.2
+    lr: 0.001
+    batch_size: 64
+    max_epochs: 100
+    patience: 10
+    val_ratio: 0.15
+
+tuning:
+  n_trials: 30
+  representative:           # PRD: tuning hanya pada 2 komoditas representatif
+    - [nasional, beras_medium_1]
+    - [nasional, cabai_rawit_merah]
+  folds_used: 4             # fold backtest terakhir yang dipakai sebagai objektif
+
+dashboard:
+  history_days: 180
+  alert_threshold: 0.10     # F-13: tandai jika prediksi naik > 10% dalam 7 hari
+  default_commodity: cabai_rawit_merah
+  default_region: nasional
+  default_horizon: 7
+  github_url: https://github.com/aditama/pangancast

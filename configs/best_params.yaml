@@ -1,0 +1,19 @@
+# Dihasilkan otomatis oleh `make tune` — menimpa parameter default di config.yaml
+lstm:
+  dropout: 0.38625281322982374
+  hidden_size: 32
+  lr: 0.0015635108708133452
+  num_layers: 2
+  window: 60
+prophet:
+  changepoint_prior_scale: 0.426359366040766
+  holidays_prior_scale: 0.03836588186613471
+  seasonality_prior_scale: 0.015711298625546165
+xgboost:
+  colsample_bytree: 0.6777677500493654
+  learning_rate: 0.012720570987354327
+  max_depth: 2
+  min_child_weight: 1.3023993483824934
+  n_estimators: 100
+  reg_lambda: 9.446391745160764
+  subsample: 0.8727984642891312

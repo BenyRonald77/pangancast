@@ -1,0 +1,21 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.ipynb_checkpoints/
+.pytest_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+logs/
+*.log
+
+# Model terlatih tidak di-commit (dashboard hanya membaca outputs/).
+models/*
+!models/.gitkeep
+
+# Data mentah PIHPS kecil (< 1 MB) sehingga disimpan sebagai snapshot (mitigasi risiko situs berubah).
+# data/raw/manual/ untuk ekspor Excel manual.
+data/raw/manual/*.xlsx
+
+.streamlit/secrets.toml

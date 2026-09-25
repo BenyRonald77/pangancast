@@ -1,0 +1,10 @@
+# Dependensi dashboard (dipakai Streamlit Community Cloud) — ringan, tanpa library training.
+streamlit==1.49.1
+pandas==2.3.2
+numpy==2.5.3
+scipy==1.18.1
+pyarrow==21.0.0
+plotly==6.5.0
+PyYAML==6.0.3
+statsmodels==0.15.0
+holidays==0.105

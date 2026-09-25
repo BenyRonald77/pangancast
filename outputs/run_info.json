@@ -1,0 +1,65 @@
+{
+  "run_at": "2026-09-24T23:55:47",
+  "data_start": "2018-01-01",
+  "data_end": "2026-09-24",
+  "n_series": 10,
+  "folds": {
+    "horizons": [
+      7,
+      14,
+      30
+    ],
+    "max_horizon": 30,
+    "n_folds": 12,
+    "test_size": 30,
+    "holdout_days": 90,
+    "intervals": [
+      0.8,
+      0.95
+    ]
+  },
+  "seed": 42,
+  "python": "3.12.6",
+  "models": {
+    "naive": null,
+    "seasonal_naive": null,
+    "arima": {
+      "seasonal": true,
+      "m": 7,
+      "max_p": 3,
+      "max_q": 3,
+      "max_P": 1,
+      "max_Q": 1,
+      "select_train_days": 1095
+    },
+    "prophet": {
+      "changepoint_prior_scale": 0.426359366040766,
+      "seasonality_prior_scale": 0.015711298625546165,
+      "holidays_prior_scale": 0.03836588186613471,
+      "yearly_seasonality": true,
+      "weekly_seasonality": true,
+      "uncertainty_samples": 300
+    },
+    "xgboost": {
+      "n_estimators": 100,
+      "learning_rate": 0.012720570987354327,
+      "max_depth": 2,
+      "subsample": 0.8727984642891312,
+      "colsample_bytree": 0.6777677500493654,
+      "min_child_weight": 1.3023993483824934,
+      "reg_lambda": 9.446391745160764,
+      "calibration_days": 180
+    },
+    "lstm": {
+      "window": 60,
+      "hidden_size": 32,
+      "num_layers": 2,
+      "dropout": 0.38625281322982374,
+      "lr": 0.0015635108708133452,
+      "batch_size": 64,
+      "max_epochs": 100,
+      "patience": 10,
+      "val_ratio": 0.15
+    }
+  }
+}

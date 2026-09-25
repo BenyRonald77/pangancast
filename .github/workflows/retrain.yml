@@ -1,0 +1,40 @@
+name: Retrain mingguan
+
+# Unduh data PIHPS terbaru, latih ulang semua model, dan commit artefak outputs/.
+# Hyperparameter memakai configs/best_params.yaml (tuning tidak diulang tiap minggu).
+on:
+  schedule:
+    - cron: "0 22 * * 0"   # Senin 05:00 WIB
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  retrain:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+      - name: Install
+        run: |
+          pip install torch==2.8.0 --index-url https://download.pytorch.org/whl/cpu
+          pip install -r requirements-dev.txt
+      - name: Data
+        run: make data
+      - name: Train
+        run: python -m src.train --n-jobs 4 --no-save-models
+      - name: Test
+        run: pytest -q
+      - name: Commit artefak
+        run: |
+          git config user.name "pangancast-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/raw data/processed outputs
+          git diff --cached --quiet || git commit -m "chore: retrain mingguan $(date -u +%Y-%m-%d)"
+          git push

@@ -1,0 +1,20 @@
+# Dependensi pipeline data + training + pengembangan (versi dikunci untuk reproducibility).
+-r requirements.txt
+requests==2.32.5
+beautifulsoup4==4.14.3
+openpyxl==3.1.5
+scikit-learn==1.7.2
+pmdarima==2.1.1
+prophet==1.4.0
+xgboost==3.1.1
+optuna==5.0.0
+torch==2.8.0
+joblib
+# kualitas kode & notebook
+ruff==0.16.8
+pytest==8.4.2
+pytest-cov==7.1.0
+pre-commit
+nbformat
+nbconvert
+ipykernel
