@@ -1,7 +1,7 @@
 {
-  "run_at": "2026-09-24T23:55:47",
+  "run_at": "2026-09-28T01:01:01",
   "data_start": "2018-01-01",
-  "data_end": "2026-09-24",
+  "data_end": "2026-09-25",
   "n_series": 10,
   "folds": {
     "horizons": [
@@ -19,7 +19,7 @@
     ]
   },
   "seed": 42,
-  "python": "3.12.6",
+  "python": "3.12.14",
   "models": {
     "naive": null,
     "seasonal_naive": null,
